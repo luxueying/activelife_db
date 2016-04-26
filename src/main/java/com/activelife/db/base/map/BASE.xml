@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BASE">
+    <sql id="PAGINATION">
+        <if test="_orderby != null">
+            ORDER BY ${_orderby} ${_order}
+        </if>
+        <if test="_start != null and _end != null">
+            LIMIT #{_start} , #{_end}
+        </if>
+    </sql>
+</mapper>

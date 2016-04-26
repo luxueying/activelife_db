@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="PROVINCE">
+    <resultMap id="PROVINCE_RESULT_MAP" type="com.activelife.common.province.po.Province">
+        <id column="PROVINCE_CODE" property="provinceCode" jdbcType="VARCHAR" />
+        <result column="PROVINCE_NAME" property="provinceName" jdbcType="VARCHAR" />
+        <result column="EN_NAME" property="enName" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="COUNTRY_CODE" property="countryCode" jdbcType="VARCHAR" />
+        <result column="COUNTRY_NAME" property="countryName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <insert id="saveProvince" parameterType="com.activelife.common.province.po.Province">
+        insert into TOP_BASE_PROVINCE
+        (PROVINCE_CODE, PROVINCE_NAME,
+        EN_NAME, STATUS, COUNTRY_CODE, COUNTRY_NAME)
+        values
+        (#{provinceCode,jdbcType=VARCHAR},
+        #{provinceName,jdbcType=VARCHAR},
+        #{enName,jdbcType=VARCHAR},
+        #{status,jdbcType=VARCHAR},
+        #{countryCode,jdbcType=VARCHAR},
+        #{countryName,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateProvince" parameterType="com.activelife.common.province.po.Province">
+        update TOP_BASE_PROVINCE
+        <set>
+            <if test="provinceName != null and provinceName != ''">
+                PROVINCE_NAME = #{provinceName,jdbcType=VARCHAR},
+            </if>
+            <if test="enName != null and enName != ''">
+                EN_NAME = #{enName,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                STATUS = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="countryCode != null">
+                COUNTRY_CODE = #{countryCode,jdbcType=VARCHAR},
+            </if>
+            <if test="countryName != null">
+                COUNTRY_NAME = #{countryName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where PROVINCE_CODE = #{provinceCode,jdbcType=VARCHAR}
+    </update>
+
+    <select id="findProvinceByParams" resultMap="PROVINCE_RESULT_MAP" parameterType="java.util.Map">
+        select * from TOP_BASE_PROVINCE
+        <where>
+            1 = 1
+            <if test="provinceName != null and provinceName != ''">
+                and PROVINCE_NAME = #{provinceName}
+            </if>
+        </where>
+    </select>
+
+    <select id="findProvinceById" resultMap="PROVINCE_RESULT_MAP" parameterType="java.lang.String">
+        select * from
+        TOP_BASE_PROVINCE where PROVINCE_CODE = #{provinceCode}
+    </select>
+
+    <select id="findProvincesByParams" resultMap="PROVINCE_RESULT_MAP" parameterType="java.util.Map">
+        select * from TOP_BASE_PROVINCE
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+        <include refid="BASE.PAGINATION" />
+    </select>
+
+    <select id="getTotalCount" parameterType="java.util.Map" resultType="Integer">
+        select count(PROVINCE_CODE) from TOP_BASE_PROVINCE
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+    </select>
+
+    <sql id="BASE_LIST_CONDITION">
+        <if test="provinceName != null and provinceName != ''">
+            and PROVINCE_NAME like "%"#{provinceName}"%"
+        </if>
+        <if test="enName != null and enName != ''">
+            and EN_NAME like "%"#{enName}"%"
+        </if>
+        <if test="status != null and status != ''">
+            and STATUS = #{status}
+        </if>
+        <if test="countryCode != null and countryCode != ''">
+            and COUNTRY_CODE = #{countryCode}
+        </if>
+        <if test="countryName != null and countryName != ''">
+            and COUNTRY_NAME like "%"#{countryName}"%"
+        </if>
+    </sql>
+</mapper>

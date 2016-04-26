@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="COUNTRY">
+    <resultMap id="COUNTRY_RESULT_MAP" type="com.activelife.common.country.po.Country">
+        <id column="COUNTRY_CODE" property="countryCode" jdbcType="VARCHAR" />
+        <result column="COUNTRY_NAME" property="countryName" jdbcType="VARCHAR" />
+        <result column="EN_NAME" property="enName" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <insert id="saveCountry" parameterType="com.activelife.common.country.po.Country">
+        insert into TOP_BASE_COUNTRY
+        (COUNTRY_CODE, COUNTRY_NAME,
+        EN_NAME, STATUS)
+        values
+        (#{countryCode,jdbcType=VARCHAR},
+        #{countryName,jdbcType=VARCHAR},
+        #{enName,jdbcType=VARCHAR},
+        #{status,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateCountry" parameterType="com.activelife.common.country.po.Country">
+        update TOP_BASE_COUNTRY
+        <set>
+            <if test="countryName != null and countryName != ''">
+                COUNTRY_NAME = #{countryName,jdbcType=VARCHAR},
+            </if>
+            <if test="enName != null and enName != ''">
+                EN_NAME = #{enName,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                STATUS = #{status,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where COUNTRY_CODE = #{countryCode,jdbcType=VARCHAR}
+    </update>
+
+    <select id="findCountryByParams" resultMap="COUNTRY_RESULT_MAP" parameterType="java.util.Map">
+        select * from TOP_BASE_COUNTRY
+        <where>
+            1 = 1
+            <if test="countryName != null and countryName != ''">
+                and COUNTRY_NAME = #{countryName}
+            </if>
+        </where>
+    </select>
+
+    <select id="findCountryById" resultMap="COUNTRY_RESULT_MAP" parameterType="java.lang.String">
+        select * from
+        TOP_BASE_COUNTRY where COUNTRY_CODE = #{countryCode}
+    </select>
+
+    <select id="findCountrysByParams" resultMap="COUNTRY_RESULT_MAP" parameterType="java.util.Map">
+        select * from TOP_BASE_COUNTRY
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+        <include refid="BASE.PAGINATION" />
+    </select>
+
+    <select id="getTotalCount" parameterType="java.util.Map" resultType="Integer">
+        select count(COUNTRY_CODE) from TOP_BASE_COUNTRY
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+    </select>
+
+    <sql id="BASE_LIST_CONDITION">
+        <if test="countryCode != null and countryCode != ''">
+            and COUNTRY_CODE = #{countryCode}
+        </if>
+        <if test="countryName != null and countryName != ''">
+            and COUNTRY_NAME like "%"#{countryName}"%"
+        </if>
+        <if test="enName != null and enName != ''">
+            and EN_NAME like "%"#{enName}"%"
+        </if>
+        <if test="status != null and status != ''">
+            and STATUS = #{status}
+        </if>
+    </sql>
+</mapper>

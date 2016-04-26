@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="LOGISTICS_COMPANY">
+    <resultMap id="LOGISTICS_COMPANY_RESULT_MAP" type="com.activelife.common.logistics.po.LogisticsCompany">
+        <id column="COMPANY_ID" property="companyId" jdbcType="VARCHAR" />
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR" />
+        <result column="COMPANY_PHONE" property="companyPhone" jdbcType="VARCHAR" />
+        <result column="PRINCIPAL" property="principal" jdbcType="VARCHAR" />
+        <result column="TELEPHONE" property="telephone" jdbcType="VARCHAR" />
+        <result column="CELLPHONE" property="cellphone" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <insert id="saveLogisticsCompany" parameterType="com.activelife.common.logistics.po.LogisticsCompany">
+        <selectKey resultType="java.lang.String" keyProperty="companyId" order="BEFORE">
+            select uuid() as companyId from dual
+        </selectKey>
+        insert into TOP_LOGISTICS_COMPANY
+        (COMPANY_ID, COMPANY_NAME, COMPANY_PHONE, PRINCIPAL,
+        TELEPHONE, CELLPHONE, STATUS)
+        values
+        (#{companyId,jdbcType=VARCHAR},
+        #{companyName,jdbcType=VARCHAR},
+        #{companyPhone,jdbcType=VARCHAR},
+        #{principal,jdbcType=VARCHAR},
+        #{telephone,jdbcType=VARCHAR},
+        #{cellphone,jdbcType=VARCHAR},
+        #{status,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateLogisticsCompany" parameterType="com.activelife.common.logistics.po.LogisticsCompany">
+        update TOP_LOGISTICS_COMPANY
+        <set>
+            <if test="companyName != null and companyName != ''">
+                COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+            </if>
+            <if test="companyPhone != null and companyPhone != ''">
+                COMPANY_PHONE = #{companyPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="principal != null and principal != ''">
+                PRINCIPAL = #{principal,jdbcType=VARCHAR},
+            </if>
+            <if test="telephone != null and telephone != ''">
+                TELEPHONE = #{telephone,jdbcType=VARCHAR},
+            </if>
+            <if test="cellphone != null and cellphone != ''">
+                CELLPHONE = #{cellphone,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null and status != ''">
+                STATUS = #{status,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where COMPANY_ID = #{companyId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="findLogisticsCompanyById" resultMap="LOGISTICS_COMPANY_RESULT_MAP"
+        parameterType="java.lang.String">
+        select * from
+        TOP_LOGISTICS_COMPANY where COMPANY_ID =
+        #{companyId}
+    </select>
+
+    <select id="findLogisticsCompanysByParams" resultMap="LOGISTICS_COMPANY_RESULT_MAP"
+        parameterType="java.util.Map">
+        select * from TOP_LOGISTICS_COMPANY
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+        <include refid="BASE.PAGINATION" />
+    </select>
+
+    <select id="getTotalCount" parameterType="java.util.Map" resultType="Integer">
+        select count(COMPANY_ID) from TOP_LOGISTICS_COMPANY
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+    </select>
+
+    <sql id="BASE_LIST_CONDITION">
+        <if test="companyName != null and companyName != ''">
+            and COMPANY_NAME like "%"#{companyName}"%"
+        </if>
+        <if test="companyPhone != null and companyPhone != ''">
+            and COMPANY_PHONE = #{companyPhone}
+        </if>
+        <if test="principal != null and principal != ''">
+            and PRINCIPAL like "%"#{principal}"%"
+        </if>
+        <if test="telephone != null and telephone != ''">
+            and TELEPHONE = #{telephone}
+        </if>
+        <if test="cellphone != null and cellphone != ''">
+            and CELLPHONE = #{cellphone}
+        </if>
+        <if test="status != null and status != ''">
+            and STATUS = #{status}
+        </if>
+    </sql>
+</mapper>

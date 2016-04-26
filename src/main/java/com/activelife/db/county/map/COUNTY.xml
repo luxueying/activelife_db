@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="COUNTY">
+    <resultMap id="COUNTY_RESULT_MAP" type="com.activelife.common.county.po.County">
+        <id column="COUNTY_CODE" property="countyCode" jdbcType="VARCHAR" />
+        <result column="COUNTY_NAME" property="countyName" jdbcType="VARCHAR" />
+        <result column="EN_NAME" property="enName" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="CITY_CODE" property="cityCode" jdbcType="VARCHAR" />
+        <result column="CITY_NAME" property="cityName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <insert id="saveCounty" parameterType="com.activelife.common.county.po.County">
+        insert into TOP_BASE_COUNTY
+        (COUNTY_CODE, COUNTY_NAME,
+        EN_NAME, STATUS, CITY_CODE, CITY_NAME)
+        values
+        (#{countyCode,jdbcType=VARCHAR},
+        #{countyName,jdbcType=VARCHAR},
+        #{enName,jdbcType=VARCHAR},
+        #{status,jdbcType=VARCHAR},
+        #{cityCode,jdbcType=VARCHAR},
+        #{cityName,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateCounty" parameterType="com.activelife.common.county.po.County">
+        update TOP_BASE_COUNTY
+        <set>
+            <if test="countyName != null and countyName != ''">
+                COUNTY_NAME = #{countyName,jdbcType=VARCHAR},
+            </if>
+            <if test="enName != null and enName != ''">
+                EN_NAME = #{enName,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                STATUS = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="cityCode != null">
+                CITY_CODE = #{cityCode,jdbcType=VARCHAR},
+            </if>
+            <if test="cityName != null">
+                CITY_NAME = #{cityName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where COUNTY_CODE = #{countyCode,jdbcType=VARCHAR}
+    </update>
+
+    <select id="findCountyByParams" resultMap="COUNTY_RESULT_MAP" parameterType="java.util.Map">
+        select * from TOP_BASE_COUNTY
+        <where>
+            1 = 1
+            <if test="countyName != null and countyName != ''">
+                and COUNTY_NAME = #{countyName}
+            </if>
+        </where>
+    </select>
+
+    <select id="findCountyById" resultMap="COUNTY_RESULT_MAP" parameterType="java.lang.String">
+        select * from
+        TOP_BASE_COUNTY where COUNTY_CODE = #{countyCode}
+    </select>
+
+    <select id="findCountysByParams" resultMap="COUNTY_RESULT_MAP" parameterType="java.util.Map">
+        select * from TOP_BASE_COUNTY
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+        <include refid="BASE.PAGINATION" />
+    </select>
+
+    <select id="getTotalCount" parameterType="java.util.Map" resultType="Integer">
+        select count(COUNTY_CODE) from TOP_BASE_COUNTY
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+    </select>
+
+    <sql id="BASE_LIST_CONDITION">
+        <if test="countyName != null and countyName != ''">
+            and COUNTY_NAME like "%"#{countyName}"%"
+        </if>
+        <if test="enName != null and enName != ''">
+            and EN_NAME like "%"#{enName}"%"
+        </if>
+        <if test="status != null and status != ''">
+            and STATUS = #{status}
+        </if>
+        <if test="cityCode != null and cityCode != ''">
+            and CITY_CODE = #{cityCode}
+        </if>
+        <if test="cityName != null and cityName != ''">
+            and CITY_NAME like "%"#{cityName}"%"
+        </if>
+    </sql>
+</mapper>

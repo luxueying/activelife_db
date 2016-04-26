@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="PRODUCT">
+    <resultMap id="PRODUCT_RESULT_MAP" type="com.activelife.common.product.po.Product">
+        <id column="PRODUCT_ID" property="productId" jdbcType="VARCHAR" />
+        <result column="PRODUCT_CODE" property="productCode" jdbcType="VARCHAR" />
+        <result column="PRODUCT_NAME" property="productName" jdbcType="VARCHAR" />
+        <result column="COUNTRY_CODE" property="countryCode" jdbcType="VARCHAR" />
+        <result column="PROVINCE_CODE" property="provinceCode" jdbcType="VARCHAR" />
+        <result column="CITY_CODE" property="cityCode" jdbcType="VARCHAR" />
+        <result column="COUNTY_CODE" property="countyCode" jdbcType="VARCHAR" />
+        <result column="PRICE" property="price" jdbcType="DECIMAL" />
+        <result column="OLD_PRICE" property="oldPrice" jdbcType="DECIMAL" />
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+        <result column="STOCK" property="stock" jdbcType="DECIMAL" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="CREATE_BY" property="createBy" jdbcType="VARCHAR" />
+        <result column="UPDATE_BY" property="updateBy" jdbcType="VARCHAR" />
+        <result column="DELETE_BY" property="deleteBy" jdbcType="VARCHAR" />
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="DELETE_TIME" property="deleteTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+        
+     <resultMap id="ClassfilyMap" type="com.activelife.common.proclassfily.po.ProClassfily">
+        <id column="TOP_PRO_CLASSFILY_ID" property="proClassfilyId" jdbcType="VARCHAR" />
+        <result column="TOP_PRO_CLASSFILY_CODE" property="proClassfilyCode" jdbcType="VARCHAR" />
+        <result column="TOP_PRO_CLASSFILY_NAME" property="proClassfilyName" jdbcType="VARCHAR" />
+        <result column="TOP_PRO_CLASSFILY_PARENT_ID" property="proClassfilyParentId" jdbcType="VARCHAR" />
+    </resultMap>
+
+	<!-- 获取首页数据 -->
+    <select id="findTopPro" resultMap="PRODUCT_RESULT_MAP">
+		select * from TOP_PRO_PRODUCT LIMIT 20
+    </select>
+   
+    <!-- 获取商品分类 -->
+    <select id="findProClassfily" resultMap="ClassfilyMap">
+        select * from TOP_PRO_CLASSFILY
+    </select>
+    
+    <!-- 根据商品分类查看商品信息 -->
+    <select id="findProByClass" resultMap="PRODUCT_RESULT_MAP" parameterType="java.lang.String">
+		select * from TOP_PRO_PRODUCT where CLASSFILY_ID = #{classid}
+    </select>
+    
+    <!-- 获取具体商品信息 -->
+	<select id="findPro" resultMap="PRODUCT_RESULT_MAP" parameterType="java.lang.String">
+		select * from TOP_PRO_PRODUCT where PRODUCT_ID = #{productId}
+    </select>
+
+    <insert id="saveProduct" parameterType="com.activelife.common.product.po.Product" >
+        <selectKey resultType="java.lang.String" keyProperty="productId" order="BEFORE">
+            select uuid() as productId from dual
+        </selectKey>
+        insert into TOP_PRO_PRODUCT
+        (PRODUCT_ID,
+        PRODUCT_CODE, PRODUCT_NAME, COUNTRY_CODE, PROVINCE_CODE, CITY_CODE, COUNTY_CODE, PRICE,
+        ADDRESS, STOCK, STATUS, CREATE_BY, CREATE_TIME)
+        values
+        (#{productId,jdbcType=VARCHAR},
+        #{productCode,jdbcType=VARCHAR},
+        #{productName,jdbcType=VARCHAR},
+        #{countryCode,jdbcType=VARCHAR},
+        #{provinceCode,jdbcType=VARCHAR},
+        #{cityCode,jdbcType=VARCHAR},
+        #{countyCode,jdbcType=VARCHAR},
+        #{price,jdbcType=DECIMAL},
+        #{address,jdbcType=VARCHAR},
+        #{stock,jdbcType=DECIMAL},
+        #{status,jdbcType=VARCHAR},
+        #{createBy,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateProduct" parameterType="com.activelife.common.product.po.Product">
+        update TOP_PRO_PRODUCT
+        <set>
+            <if test="productCode != null and productCode != ''">
+                PRODUCT_CODE = #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="productName != null and productName != ''">
+                PRODUCT_NAME = #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="countryCode != null and countryCode != ''">
+                COUNTRY_CODE = #{countryCode,jdbcType=VARCHAR},
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                PROVINCE_CODE = #{provinceCode,jdbcType=VARCHAR},
+            </if>
+            <if test="cityCode != null and cityCode != ''">
+                CITY_CODE = #{cityCode,jdbcType=VARCHAR},
+            </if>
+            <if test="countyCode != null and countyCode != ''">
+                COUNTY_CODE = #{countyCode,jdbcType=VARCHAR},
+            </if>
+            <if test="price > 0">
+                PRICE = #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="oldPrice > 0">
+                OLD_PRICE = #{oldPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="address != null and address != ''">
+                ADDRESS = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="stock > 0">
+                STOCK = #{stock,jdbcType=DECIMAL},
+            </if>
+            <if test="status != null and status != ''">
+                STATUS = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                UPDATE_BY = #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteBy != null and deleteBy != ''">
+                DELETE_BY = #{deleteBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleteTime != null">
+                DELETE_TIME = #{deleteTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where PRODUCT_ID = #{productId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="findProductByParams" resultMap="PRODUCT_RESULT_MAP" parameterType="java.util.Map">
+        select * from TOP_PRO_PRODUCT
+        <where>
+            1 = 1
+            <if test="productCode != null and productCode != ''">
+                and PRODUCT_CODE = #{productCode}
+            </if>
+            <if test="productName != null and productName != ''">
+                and PRODUCT_NAME = #{productName}
+            </if>
+        </where>
+    </select>
+
+    <select id="findProductById" resultMap="PRODUCT_RESULT_MAP" parameterType="java.lang.String">
+        select * from
+        TOP_PRO_PRODUCT where PRODUCT_ID = #{productId}
+    </select>
+
+    <select id="findProductsByParams" resultMap="PRODUCT_RESULT_MAP" parameterType="java.util.Map">
+        select * from TOP_PRO_PRODUCT
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+        <include refid="BASE.PAGINATION" />
+    </select>
+
+    <select id="getTotalCount" parameterType="java.util.Map" resultType="Integer">
+        select count(PRODUCT_ID) from TOP_PRO_PRODUCT
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+    </select>
+
+    <sql id="BASE_LIST_CONDITION">
+        <if test="productCode != null and productCode != ''">
+            and PRODUCT_CODE = #{productCode}
+        </if>
+        <if test="productName != null and productName != ''">
+            and PRODUCT_NAME like "%"#{productName}"%"
+        </if>
+        <if test="countryCode != null and countryCode != ''">
+            and COUNTRY_CODE = #{countryCode}
+        </if>
+        <if test="provinceCode != null and provinceCode != ''">
+            and PROVINCE_CODE = #{provinceCode}
+        </if>
+        <if test="cityCode != null and cityCode != ''">
+            and CITY_CODE = #{cityCode}
+        </if>
+        <if test="countyCode != null and countyCode != ''">
+            and COUNTY_CODE = #{countyCode}
+        </if>
+        <if test="price > 0">
+            and PRICE = #{price}
+        </if>
+        <if test="oldPrice > 0">
+            and OLD_PRICE = #{oldPrice}
+        </if>
+        <if test="address != null and address != ''">
+            and ADDRESS like "%"#{address}"%"
+        </if>
+        <if test="stock > 0">
+            and STOCK = #{stock}
+        </if>
+        <if test="status != null and status != ''">
+            and STATUS = #{status}
+        </if>
+        <if test="createBy != null and createBy != ''">
+            and CREATE_BY = #{createBy}
+        </if>
+        <if test="updateBy != null and updateBy != ''">
+            and UPDATE_BY = #{updateBy}
+        </if>
+        <if test="deleteBy != null and deleteBy != ''">
+            and DELETE_BY = #{deleteBy}
+        </if>
+        <if test="createTime != null">
+            and CREATE_TIME = #{createTime}
+        </if>
+        <if test="updateTime != null">
+            and UPDATE_TIME = #{updateTime}
+        </if>
+        <if test="deleteTime != null">
+            and DELETE_TIME = #{deleteTime}
+        </if>
+    </sql>
+</mapper>

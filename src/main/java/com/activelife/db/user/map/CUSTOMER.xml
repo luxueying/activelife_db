@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="CUSTOMER">
+    <resultMap id="CUSTOMER_RESULT_MAP" type="com.activelife.common.user.po.Customer">
+        <id column="CUSTOMER_ID" property="customerId" jdbcType="VARCHAR" />
+        <result column="PHONE_NUMBER" property="phoneNumber" jdbcType="VARCHAR" />
+        <result column="PASSWORD" property="password" jdbcType="VARCHAR" />
+        <result column="REAL_NAME" property="realName" jdbcType="VARCHAR" />
+        <result column="NICK_NAME" property="nickName" jdbcType="VARCHAR" />
+        <result column="HEAD_PHOTO" property="headPhoto" jdbcType="VARCHAR" />
+        <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+        <result column="COUNTRY_CODE" property="countryCode" jdbcType="VARCHAR" />
+        <result column="PROVINCE_CODE" property="provinceCode" jdbcType="VARCHAR" />
+        <result column="CITY_CODE" property="cityCode" jdbcType="VARCHAR" />
+        <result column="COUNTY_CODE" property="countyCode" jdbcType="VARCHAR" />
+        <result column="BIRTHDAY" property="birthday" jdbcType="VARCHAR" />
+        <result column="GENDER" property="gender" jdbcType="VARCHAR" />
+        <result column="IS_MARRIED" property="isMarried" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="ADDRESS_ID" property="addressId" jdbcType="VARCHAR" />
+        <result column="DELETE_BY" property="deleteBy" jdbcType="VARCHAR" />
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="DELETE_TIME" property="deleteTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <insert id="saveCustomer" parameterType="com.activelife.common.user.po.Customer">
+        <selectKey resultType="java.lang.String" keyProperty="customerId" order="BEFORE">
+            select
+            uuid() as customerId
+            from dual
+        </selectKey>
+        insert into TOP_USER_CUSTOMER
+        (CUSTOMER_ID, PHONE_NUMBER, PASSWORD, REAL_NAME, NICK_NAME
+        EMAIL, ADDRESS,
+        COUNTRY_CODE, PROVINCE_CODE, CITY_CODE, COUNTY_CODE, BIRTHDAY
+        GENDER, IS_MARRIED, STATUS, CREATE_TIME
+        )
+        values
+        (#{customerId,jdbcType=VARCHAR},
+        #{phoneNumber,jdbcType=VARCHAR},
+        #{password,jdbcType=VARCHAR},
+        #{realName,jdbcType=VARCHAR},
+        #{nickName,jdbcType=VARCHAR},
+        #{email,jdbcType=VARCHAR},
+        #{address,jdbcType=VARCHAR},
+        #{countryCode,jdbcType=VARCHAR},
+        #{provinceCode,jdbcType=VARCHAR},
+        #{cityCode,jdbcType=VARCHAR},
+        #{countyCode,jdbcType=VARCHAR},
+        #{birthday,jdbcType=TIMESTAMP},
+        #{gender,jdbcType=VARCHAR},
+        #{isMarried,jdbcType=VARCHAR},
+        #{status,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateCustomer" parameterType="com.activelife.common.user.po.Customer">
+        update TOP_USER_CUSTOMER
+        <set>
+            <if test="phoneNumber != null and phoneNumber != ''">
+                PHONE_NUMBER = #{phoneNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null and password != ''">
+                PASSWORD = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null and realName != ''">
+                REAL_NAME = #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="nickName != null and nickName != ''">
+                NICK_NAME = #{nickName,jdbcType=VARCHAR},
+            </if>
+            <if test="headPhoto != null and headPhoto != ''">
+                HEAD_PHOTO = #{headPhoto,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null and email != ''">
+                EMAIL = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null and address != ''">
+                ADDRESS = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="countryCode != null and countryCode != ''">
+                COUNTRY_CODE = #{countryCode,jdbcType=VARCHAR},
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                PROVINCE_CODE = #{provinceCode,jdbcType=VARCHAR},
+            </if>
+            <if test="cityCode != null and cityCode != ''">
+                CITY_CODE = #{cityCode,jdbcType=VARCHAR},
+            </if>
+            <if test="countyCode != null and countyCode != ''">
+                COUNTY_CODE = #{countyCode,jdbcType=VARCHAR},
+            </if>
+            <if test="birthday != null and birthday != ''">
+                BIRTHDAY = #{birthday,jdbcType=TIMESTAMP},
+            </if>
+            <if test="gender != null and gender != ''">
+                GENDER = #{gender,jdbcType=VARCHAR},
+            </if>
+            <if test="isMarried != null and isMarried != ''">
+                IS_MARRIED = #{isMarried,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null and status != ''">
+                STATUS = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="addressId != null and addressId != ''">
+                ADDRESS_ID = #{addressId,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteBy != null and deleteBy != ''">
+                DELETE_BY = #{deleteBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleteTime != null">
+                DELETE_TIME = #{deleteTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where CUSTOMER_ID = #{customerId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="findCustomerByParams" resultMap="CUSTOMER_RESULT_MAP" parameterType="java.util.Map">
+        select * from TOP_USER_CUSTOMER
+        <where>
+            1 = 1
+            <if test="phoneNumber != null and phoneNumber != ''">
+                and PHONE_NUMBER = #{phoneNumber}
+            </if>
+        </where>
+    </select>
+
+    <select id="findCustomerById" resultMap="CUSTOMER_RESULT_MAP" parameterType="java.lang.String">
+        select *
+        from
+        TOP_USER_CUSTOMER
+        where CUSTOMER_ID = #{customerId}
+    </select>
+
+    <select id="findCustomerByPhone" resultMap="CUSTOMER_RESULT_MAP" parameterType="java.lang.String">
+        select *
+        from
+        TOP_USER_CUSTOMER
+        where PHONE_NUMBER = #{phoneNumber}
+    </select>
+
+    <select id="findCustomersByParams" resultMap="CUSTOMER_RESULT_MAP" parameterType="java.util.Map">
+        select * from TOP_USER_CUSTOMER
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+        <include refid="BASE.PAGINATION" />
+    </select>
+
+    <select id="getTotalCount" parameterType="java.util.Map" resultType="Integer">
+        select count(CUSTOMER_ID) from TOP_USER_CUSTOMER
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+    </select>
+
+    <sql id="BASE_LIST_CONDITION">
+        <if test="realName != null and realName != ''">
+            and REAL_NAME = #{realName}
+        </if>
+        <if test="nickName != null and nickName != ''">
+            and NICK_NAME = #{nickName}
+        </if>
+        <if test="email != null and email != ''">
+            and EMAIL = #{email}
+        </if>
+        <if test="address != null and address != ''">
+            and ADDRESS = #{address}
+        </if>
+        <if test="gender != null and gender != ''">
+            and GENDER = #{gender}
+        </if>
+        <if test="isMarried != null and isMarried != ''">
+            and IS_MARRIED = #{isMarried}
+        </if>
+        <if test="countryCode != null and countryCode != ''">
+            and COUNTRY_CODE = #{countryCode}
+        </if>
+        <if test="provinceCode != null and provinceCode != ''">
+            and PROVINCE_CODE = #{provinceCode}
+        </if>
+        <if test="cityCode != null and cityCode != ''">
+            and CITY_CODE = #{cityCode}
+        </if>
+        <if test="countyCode != null and countyCode != ''">
+            and COUNTY_CODE = #{countyCode}
+        </if>
+        <if test="deleteBy != null and deleteBy != ''">
+            and DELETE_BY = #{deleteBy}
+        </if>
+        <if test="deleteTime != null and deleteTime != ''">
+            and DELETE_TIME = #{deleteTime}
+        </if>
+        <if test="status != null and status != ''">
+            and STATUS = #{status}
+        </if>
+    </sql>
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="SHIPPING_ADDRESS">
+    <resultMap id="SHIPPING_ADDRESS_RESULT_MAP" type="com.activelife.common.address.po.ShippingAddress">
+        <id column="ADDRESS_ID" property="addressId" jdbcType="VARCHAR" />
+        <result column="CONSIGNEE" property="consignee" jdbcType="VARCHAR" />
+        <result column="CELLPHONE" property="cellphone" jdbcType="VARCHAR" />
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+         <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <insert id="saveShippingAddress" parameterType="com.activelife.common.address.po.ShippingAddress">
+        <selectKey resultType="java.lang.String" keyProperty="addressId" order="BEFORE">
+            select uuid() as addressId from dual
+        </selectKey>
+        insert into TOP_SHIPPING_ADDRESS
+        (ADDRESS_ID, CONSIGNEE, CELLPHONE, ADDRESS, CREATE_TIME, USER_ID)
+        values
+        (#{addressId,jdbcType=VARCHAR},
+        #{consignee,jdbcType=VARCHAR},
+        #{cellphone,jdbcType=VARCHAR},
+        #{address,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{userId,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateShippingAddress" parameterType="com.activelife.common.address.po.ShippingAddress">
+        update TOP_SHIPPING_ADDRESS
+        <set>
+            <if test="consignee != null and consignee != ''">
+                CONSIGNEE = #{consignee,jdbcType=VARCHAR},
+            </if>
+            <if test="cellphone != null and cellphone != ''">
+                CELLPHONE = #{cellphone,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null and address != ''">
+                ADDRESS = #{address,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where ADDRESS_ID = #{addressId,jdbcType=VARCHAR}
+    </update>
+    
+    <delete id="delAddressById" parameterType="java.lang.String">
+    	delete from TOP_SHIPPING_ADDRESS where ADDRESS_ID = #{addressId}
+    </delete>
+
+    <select id="findShippingAddressById" resultMap="SHIPPING_ADDRESS_RESULT_MAP" parameterType="java.lang.String">
+        select * from
+        TOP_SHIPPING_ADDRESS where ADDRESS_ID = #{addressId}
+    </select>
+
+    <select id="findShippingAddresssByParams" resultMap="SHIPPING_ADDRESS_RESULT_MAP" parameterType="java.util.Map">
+        select * from TOP_SHIPPING_ADDRESS
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+        <include refid="BASE.PAGINATION" />
+    </select>
+
+    <select id="getTotalCount" parameterType="java.util.Map" resultType="Integer">
+        select count(ADDRESS_ID) from TOP_SHIPPING_ADDRESS
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+    </select>
+
+    <sql id="BASE_LIST_CONDITION">
+        <if test="consignee != null and consignee != ''">
+            and CONSIGNEE = #{consignee}
+        </if>
+        <if test="cellphone != null and cellphone != ''">
+            and CELLPHONE = #{cellphone}
+        </if>
+        <if test="address != null and address != ''">
+            and ADDRESS like "%"#{address}"%"
+        </if>
+        <if test="userId != null and userId != ''">
+            and USER_ID = #{userId}
+        </if>
+    </sql>
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="PRODUCT_IMAGE">
+    <resultMap id="PRODUCT_IMAGE_RESULT_MAP" type="com.activelife.common.product.po.ProductImage">
+        <id column="IMAGE_ID" property="imageId" jdbcType="VARCHAR" />
+        <result column="IMAGE_TYPE" property="imageType" jdbcType="VARCHAR" />
+        <result column="IMAGE_URL" property="imageUrl" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="PRODUCT_ID" property="productId" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <insert id="saveProductImage" parameterType="com.activelife.common.product.po.ProductImage">
+        <selectKey resultType="java.lang.String" keyProperty="imageId" order="BEFORE">
+            select uuid() as imageId from dual
+        </selectKey>
+        insert into TOP_PRO_IMAGES
+        (IMAGE_ID, IMAGE_TYPE, IMAGE_URL, STATUS, PRODUCT_ID)
+        values
+        (#{imageId,jdbcType=VARCHAR},
+        #{imageType,jdbcType=VARCHAR},
+        #{imageUrl,jdbcType=VARCHAR},
+        #{status,jdbcType=VARCHAR},
+        #{productId,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateProductImage" parameterType="com.activelife.common.product.po.ProductImage">
+        update TOP_PRO_IMAGES
+        <set>
+            <if test="status != null and status != ''">
+                STATUS = #{status,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where IMAGE_ID = #{imageId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="findProductImageById" resultMap="PRODUCT_IMAGE_RESULT_MAP" parameterType="java.lang.String">
+        select * from
+        TOP_PRO_IMAGES where IMAGE_ID = #{imageId}
+    </select>
+
+    <select id="findProductImagesByParams" resultMap="PRODUCT_IMAGE_RESULT_MAP" parameterType="java.util.Map">
+        select * from TOP_PRO_IMAGES
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+        <include refid="BASE.PAGINATION" />
+    </select>
+
+    <select id="getTotalCount" parameterType="java.util.Map" resultType="Integer">
+        select count(IMAGE_ID) from TOP_PRO_IMAGES
+        where 1=1
+        <include refid="BASE_LIST_CONDITION" />
+    </select>
+    
+    <delete id="deleteProductImageById" parameterType="java.lang.String">
+        delete from TOP_PRO_IMAGES where IMAGE_ID = #{imageId}
+    </delete>
+
+    <sql id="BASE_LIST_CONDITION">
+        <if test="imageId != null and imageId != ''">
+            and IMAGE_ID = #{imageId}
+        </if>
+        <if test="productId != null and productId != ''">
+            and PRODUCT_ID = #{productId}
+        </if>
+        <if test="imageType != null and imageType != ''">
+            and IMAGE_TYPE = #{imageType}
+        </if>
+        <if test="status != null and status != ''">
+            and STATUS = #{status}
+        </if>
+    </sql>
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 别名  -->
+    <typeAliases>
+    </typeAliases>
+
+    <mappers>
+        <mapper resource="com/activelife/db/base/map/BASE.xml" />
+        <mapper resource="com/activelife/db/user/map/CUSTOMER.xml" />
+        <mapper resource="com/activelife/db/user/map/SYSTEM_USER.xml" />
+        <mapper resource="com/activelife/db/country/map/COUNTRY.xml" />
+        <mapper resource="com/activelife/db/province/map/PROVINCE.xml" />
+        <mapper resource="com/activelife/db/city/map/CITY.xml" />
+        <mapper resource="com/activelife/db/county/map/COUNTY.xml" />
+        <mapper resource="com/activelife/db/product/map/PRODUCT.xml" />
+        <mapper resource="com/activelife/db/product/map/PRODUCT_IMAGE.xml" />
+        <mapper resource="com/activelife/db/address/map/SHIPPING_ADDRESS.xml" />
+        <mapper resource="com/activelife/db/order/map/ORDER.xml" />
+        <mapper resource="com/activelife/db/logistics/map/LOGISTICS_COMPANY.xml" />
+        <mapper resource="com/activelife/db/logistics/map/LOGISTICS.xml" />
+        <mapper resource="com/activelife/db/cart/map/CART_SHOPPING.xml"/>
+    </mappers>
+</configuration>
